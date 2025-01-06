@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -38,7 +37,6 @@ func (c *Config) SetUser(username string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Username correctly set and saved to config file.")
 	return nil
 }
 
