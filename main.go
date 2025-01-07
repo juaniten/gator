@@ -43,6 +43,7 @@ func main() {
 	comm.register("login", handlerLogin)
 	comm.register("register", handlerRegister)
 	comm.register("reset", handlerReset)
+	comm.register("users", handlerUsers)
 
 	// Process arguments
 	args := os.Args
@@ -144,5 +145,21 @@ func handlerReset(s *state, cmd command) error {
 	}
 	fmt.Println("Database successfuly reseted.")
 	os.Exit(0)
+	return nil
+}
+
+func handlerUsers(s *state, cmd command) error {
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		log.Fatalf("Error getting users from database: %v\n", err)
+	}
+
+	for i, user := range users {
+		if user == s.config.CurrentUserName {
+			users[i] += " (current)"
+		}
+		fmt.Printf("* %s\n", users[i])
+	}
+
 	return nil
 }
