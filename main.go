@@ -45,6 +45,11 @@ func main() {
 	comm.register("register", handlerRegister)
 	comm.register("reset", handlerReset)
 	comm.register("users", handlerUsers)
+	comm.register("agg", handlerAgg)
+	comm.register("addfeed", handlerAddFeed)
+	comm.register("feeds", handlerFeeds)
+	comm.register("follow", handlerFollow)
+	comm.register("following", handlerFollowing)
 
 	// Process arguments
 	args := os.Args
@@ -59,5 +64,6 @@ func main() {
 	err = comm.run(state_pointer, newCommand)
 	if err != nil {
 		fmt.Printf("error running command: %v\n", err)
+		os.Exit(1)
 	}
 }
