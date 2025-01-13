@@ -59,8 +59,8 @@ func main() {
 	}
 	// Execute command
 	newCommand := command{
-		name:      args[1],
-		arguments: args[2:],
+		Name:      args[1],
+		Arguments: args[2:],
 	}
 	err = comm.run(state_pointer, newCommand)
 	if err != nil {

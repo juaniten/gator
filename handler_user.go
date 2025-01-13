@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -13,51 +12,49 @@ import (
 
 func handlerLogin(s *state, cmd command) error {
 
-	if len(cmd.arguments) == 0 {
-		return errors.New("command called with no arguments")
+	if len(cmd.Arguments) == 0 {
+		return fmt.Errorf("usage: %v <name>", cmd.Name)
 	}
-	username := cmd.arguments[0]
+	username := cmd.Arguments[0]
 
 	// Check if username already exists in DB
-	user, _ := s.db.GetUser(context.Background(), username)
-	if user.Name != username {
-		log.Fatalf("Username %s does not exist in DB", username)
+	_, err := s.db.GetUser(context.Background(), username)
+	if err != nil {
+		return fmt.Errorf("couldn't find user: %w", err)
 	}
 
-	err := s.config.SetUser(username)
+	err = s.config.SetUser(username)
 	if err != nil {
-		return err
+		return fmt.Errorf("couldn't set current user: %w", err)
 	}
-	fmt.Printf("Set username '%s'\n", username)
+	fmt.Printf("Username '%s' successfully set.\n", username)
 	return nil
 }
 
 func handlerRegister(s *state, cmd command) error {
-	if len(cmd.arguments) == 0 {
-		return errors.New("command called with no arguments")
-	}
-	username := cmd.arguments[0]
-
-	// Check if username already exists in DB
-	user, _ := s.db.GetUser(context.Background(), username)
-	if user.Name == username {
-		log.Fatalf("Username %s already exists in DB", username)
+	if len(cmd.Arguments) != 1 {
+		return fmt.Errorf("usage: %v <name>", cmd.Name)
 	}
 
-	// Set username
-	s.config.SetUser(username)
-	args := database.CreateUserParams{
+	name := cmd.Arguments[0]
+
+	user, err := s.db.CreateUser(context.Background(), database.CreateUserParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name:      username}
-	dbUser, err := s.db.CreateUser(context.Background(), args)
+		Name:      name,
+	})
 	if err != nil {
-		log.Fatal("error creating user in DB")
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 
-	fmt.Printf("Added user %s\n", username)
-	fmt.Printf("User data: %v\n", dbUser)
+	err = s.config.SetUser(user.Name)
+	if err != nil {
+		return fmt.Errorf("couldn't set current user: %w", err)
+	}
+
+	fmt.Println("User created successfully:")
+	printUser(user)
 	return nil
 }
 
@@ -75,4 +72,9 @@ func handlerUsers(s *state, cmd command) error {
 	}
 
 	return nil
+}
+
+func printUser(user database.User) {
+	fmt.Printf(" * ID:      %v\n", user.ID)
+	fmt.Printf(" * Name:    %v\n", user.Name)
 }

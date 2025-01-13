@@ -1,12 +1,10 @@
 package main
 
-import (
-	"fmt"
-)
+import "errors"
 
 type command struct {
-	name      string
-	arguments []string
+	Name      string
+	Arguments []string
 }
 
 type commands struct {
@@ -18,10 +16,9 @@ func (c *commands) register(name string, f func(*state, command) error) {
 }
 
 func (c *commands) run(s *state, cmd command) error {
-	if commandFunction, ok := c.handlers[cmd.name]; ok {
-		commandFunction(s, cmd)
-		return nil
+	commandFunction, ok := c.handlers[cmd.Name]
+	if !ok {
+		return errors.New("command not found")
 	}
-	fmt.Println("command does not exist")
-	return nil
+	return commandFunction(s, cmd)
 }
