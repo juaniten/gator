@@ -10,17 +10,13 @@ import (
 	"github.com/juaniten/gator/internal/database"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) < 2 {
 		log.Fatal("command called without enough arguments")
 	}
 	name := cmd.arguments[0]
 	url := cmd.arguments[1]
 
-	user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
-	if err != nil {
-		log.Fatal("error getting user: ", err)
-	}
 	args := database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
@@ -69,17 +65,11 @@ func handlerFeeds(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) < 1 {
 		log.Fatal("command follow called without enough arguments")
 	}
 	url := cmd.arguments[0]
-
-	user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
-	if err != nil {
-		log.Fatal("error getting user: ", err)
-	}
-	fmt.Printf("Found user: %v\n", user.ID)
 
 	feed, err := s.db.GetFeedByUrl(context.Background(), url)
 	if err != nil {
@@ -104,12 +94,7 @@ func handlerFollow(s *state, cmd command) error {
 
 }
 
-func handlerFollowing(s *state, cmd command) error {
-	user, err := s.db.GetUser(context.Background(), s.config.CurrentUserName)
-	if err != nil {
-		log.Fatal("error getting user: ", err)
-	}
-
+func handlerFollowing(s *state, cmd command, user database.User) error {
 	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.Name)
 	if err != nil {
 		log.Fatal("error getting feed follows: ", err)

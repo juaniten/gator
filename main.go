@@ -46,10 +46,10 @@ func main() {
 	comm.register("reset", handlerReset)
 	comm.register("users", handlerUsers)
 	comm.register("agg", handlerAgg)
-	comm.register("addfeed", handlerAddFeed)
+	comm.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	comm.register("feeds", handlerFeeds)
-	comm.register("follow", handlerFollow)
-	comm.register("following", handlerFollowing)
+	comm.register("follow", middlewareLoggedIn(handlerFollow))
+	comm.register("following", middlewareLoggedIn(handlerFollowing))
 
 	// Process arguments
 	args := os.Args
