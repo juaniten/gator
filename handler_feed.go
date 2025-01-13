@@ -94,6 +94,24 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 
 }
 
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.arguments) < 1 {
+		log.Fatal("command unfollow called without enough arguments")
+	}
+	url := cmd.arguments[0]
+
+	args := database.DeleteFeedFollowParams{
+		Name: user.Name,
+		Url:  url,
+	}
+	err := s.db.DeleteFeedFollow(context.Background(), args)
+	if err != nil {
+		log.Fatal("error deleting feed by url: ", err)
+	}
+
+	return nil
+}
+
 func handlerFollowing(s *state, cmd command, user database.User) error {
 	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.Name)
 	if err != nil {

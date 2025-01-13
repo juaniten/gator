@@ -49,6 +49,7 @@ func main() {
 	comm.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	comm.register("feeds", handlerFeeds)
 	comm.register("follow", middlewareLoggedIn(handlerFollow))
+	comm.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 	comm.register("following", middlewareLoggedIn(handlerFollowing))
 
 	// Process arguments
