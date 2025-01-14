@@ -57,6 +57,8 @@ func printFeed(feed database.Feed, username string) {
 	fmt.Printf("* Name:          %s\n", feed.Name)
 	fmt.Printf("* URL:           %s\n", feed.Url)
 	fmt.Printf("* User:          %s\n", username)
+	fmt.Printf("* LastFetchedAt: %v\n", feed.LastFetchedAt.Time)
+
 }
 
 func handlerFeeds(s *state, cmd command) error {
