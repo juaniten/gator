@@ -56,7 +56,8 @@ func main() {
 	// Process arguments
 	args := os.Args
 	if len(args) < 2 {
-		log.Fatal("command name needed")
+		log.Println("usage: gator <command> <arguments>")
+		os.Exit(1)
 	}
 	// Execute command
 	newCommand := command{
