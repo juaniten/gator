@@ -9,13 +9,14 @@ import (
 
 func handlerAgg(s *state, cmd command) error {
 	if len(cmd.Arguments) < 1 {
-		return fmt.Errorf("usage: %s <name> <time_between_requests>", cmd.Name)
+		return fmt.Errorf("usage: %s <time_between_requests>", cmd.Name)
 	}
 	timeBetweenRequests, err := time.ParseDuration(cmd.Arguments[0])
 	if err != nil {
-		return errors.New("error parsing time duration")
+		return fmt.Errorf("invalid time duration string: %w", err)
 	}
 
+	fmt.Printf("Collecting feeds every %s...\n", timeBetweenRequests)
 	ticker := time.NewTicker(timeBetweenRequests)
 	for ; ; <-ticker.C {
 		scrapeFeeds(s)
@@ -29,7 +30,7 @@ func scrapeFeeds(s *state) error {
 	}
 	err = s.db.MarkFeedFetched(context.Background(), feed.ID)
 	if err != nil {
-		return errors.New("error marking feed as fetched")
+		return fmt.Errorf("error marking feed as fetched: %w", err)
 	}
 
 	rssFeed, err := fetchFeed(context.Background(), feed.Url)
