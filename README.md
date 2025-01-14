@@ -2,7 +2,7 @@
 
 ## Overview
 
-`gator` is a command-line interface (CLI) tool designed to aggregate and manage RSS feeds for different users. Users can log in to follow feeds and browse the feeds they are following. Built using Go and backed by a PostgreSQL database, `gator` provides a streamlined experience for collecting and accessing RSS feed data.
+`gator` is a command-line interface (CLI) tool designed to aggregate and manage RSS feeds for different users. Users can log in to follow feeds and browse the posts from the feeds they are following. Built using Go and backed by a PostgreSQL database, `gator` provides a streamlined experience for collecting and accessing RSS feed data.
 
 ## Prerequisites
 
@@ -77,19 +77,19 @@ This should display an error that a command name is needed and provide usage hel
 - **JSON Example**:
   ```json
   {
-    "db_url": "postgres://postgres:postgres@localhost:5432/gator?sslmode=disable",
-    "current_user_name": "juan"
+    "db_url": "postgres://username:@localhost:5432/database?sslmode=disable"
   }
   ```
+  Replace the values with your database connection string.
 
-**Purpose**: The configuration file provides essential settings, like database connection details and user information, for `gator` to function.
+**Purpose**: The configuration file provides essential settings, like database connection details, for `gator` to function.
 
 ## Running the CLI
 
 To start the RSS aggregator, use:
 
 ```bash
-gator run
+gator agg 30s
 ```
 
 ### Available Commands
@@ -107,15 +107,15 @@ gator run
 - **login**:
 
   ```bash
-  gator login
+  gator login <name>
   ```
 
-  Logs in a user.
+  Logs in as a user that already exists.
 
 - **register**:
 
   ```bash
-  gator register
+  gator register <name>
   ```
 
   Registers a new user.
@@ -131,15 +131,15 @@ gator run
 - **agg**:
 
   ```bash
-  gator agg
+  gator agg 30s
   ```
 
-  Aggregates RSS feeds.
+  Aggregates RSS feeds every 30 seconds.
 
 - **addfeed**:
 
   ```bash
-  gator addfeed
+  gator addfeed <url>
   ```
 
   Adds a new RSS feed (requires login).
@@ -155,18 +155,18 @@ gator run
 - **follow**:
 
   ```bash
-  gator follow
+  gator follow <url>
   ```
 
-  Follows a new feed (requires login).
+  Follows a feed that already exists in the database (requires login).
 
 - **unfollow**:
 
   ```bash
-  gator unfollow
+  gator unfollow <url>
   ```
 
-  Unfollows a feed (requires login).
+  Unfollows a feed that already exists in the database (requires login).
 
 - **following**:
 
@@ -178,6 +178,6 @@ gator run
 
 - **browse**:
   ```bash
-  gator browse
+  gator browse [limit]
   ```
-  Browses RSS feeds (requires login).
+  Browses RSS feed posts with an optional limit on the number of posts displayed (requires login).
